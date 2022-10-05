@@ -7,7 +7,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  let =""
+  let ERC20=""
   let STAKE=""
   describe("Sushi Deployed", function () {
     it("test initial value on deploy", async function () {
@@ -29,11 +29,10 @@ async function main() {
     it("Add Balance to user Account : 20 Token", async function () {
       const ercContract = await ethers.getContractAt("SushiToken", storage.address);
 
-      const [owner, otherAccount] = await ethers.getSigners();
-      console.log("--------",owner, otherAccount);
-      //const giveBalance =await ercContract.mint(,10000000000000000000);
-      //await setValue.wait();
-      //expect((await ercContract.retrieve()).toNumber()).to.equal(56);
+      const [owner, user1, user2] = await ethers.getSigners();
+      console.log("--------",owner, user1, user2);
+      const giveBalance =await ercContract.mint(user1.address,30*1e18);
+      await giveBalance.wait();
     });
   })
 }

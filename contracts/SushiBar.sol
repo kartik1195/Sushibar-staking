@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 //
 // This contract handles swapping to and from xSushi, SushiSwap's staking token.
 
-contract SushiBar is ERC20("SushiBar", "xSUSHI"){
+contract Sushibar is ERC20("SushiBar", "xSUSHI"){
     using SafeMath for uint256;
     IERC20 public sushi;
     uint256 constant DAY = 60; // seconds in day
@@ -87,6 +87,7 @@ contract SushiBar is ERC20("SushiBar", "xSUSHI"){
         }
         uint256 leftAmt=stakers[msg.sender][index].amount - stakers[msg.sender][index].leftAmount;
         require((leftAmt + _share)<=unstake,string.concat("You can unstake max : ",Strings.toString(unstake-leftAmt)));
+        
         // Gets the amount of xSushi in existence
         uint256 totalShares = totalSupply();
         // Calculates the amount of Sushi the xSushi is worth
