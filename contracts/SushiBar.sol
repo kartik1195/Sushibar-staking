@@ -14,7 +14,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 contract Sushibar is ERC20("SushiBar", "xSUSHI"){
     using SafeMath for uint256;
     IERC20 public sushi;
-    uint256 constant DAY = 60; // seconds in day
+    uint256 constant DAY = 86400; // seconds in a day
     struct Stake{
         uint256 amount;
         uint256 since;
@@ -67,25 +67,28 @@ contract Sushibar is ERC20("SushiBar", "xSUSHI"){
         require(stakers[msg.sender].length-1>=index,"Stake not exist.");
         require(stakers[msg.sender][index].leftAmount>=_share,"Amount is not valid.");
 
+        uint256 stakedOn=stakers[msg.sender][index].since
+        uint256 amount=stakers[msg.sender][index].amount
         uint256 timestamp = block.timestamp;
-        require(stakers[msg.sender][index].since+(DAY*2)<=timestamp,"You are not able to unstake due to limit period.");
+
+        require(stakedOn+(DAY*2)<=timestamp,"You are not able to unstake due to limit period.");
+
         uint256 unstake=0;
         uint256 tax=0;
-
-        if(stakers[msg.sender][index].since+(DAY*4)>=timestamp){
-            unstake=((stakers[msg.sender][index].amount*25)/100); // 25%
+        if(stakedOn+(DAY*4)>=timestamp){
+            unstake=((amount*25)/100); // 25%
             tax=75;
-        }else if(stakers[msg.sender][index].since+(DAY*6)>=timestamp){
-            unstake=((stakers[msg.sender][index].amount*50)/100); // 50%
+        }else if(stakedOn+(DAY*6)>=timestamp){
+            unstake=((amount*50)/100); // 50%
             tax=50;
         }
-        else if(stakers[msg.sender][index].since+(DAY*8)>=timestamp){
-            unstake=((stakers[msg.sender][index].amount*75)/100); // 75%
+        else if(stakedOn+(DAY*8)>=timestamp){
+            unstake=((amount*75)/100); // 75%
             tax=25;
         }else{
-            unstake=stakers[msg.sender][index].amount;
+            unstake=amount;
         }
-        uint256 leftAmt=stakers[msg.sender][index].amount - stakers[msg.sender][index].leftAmount;
+        uint256 leftAmt=amount - stakers[msg.sender][index].leftAmount;
         require((leftAmt + _share)<=unstake,string.concat("You can unstake max : ",Strings.toString(unstake-leftAmt)));
         
         // Gets the amount of xSushi in existence
